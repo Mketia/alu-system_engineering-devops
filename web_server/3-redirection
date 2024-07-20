@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#script containing commands to automatically configure a Ubuntu machine to redirect to another page
+
+sudo apt update -y
+sudo apt install nginx -y
+
+sudo mkdir /etc/nginx/html
+sudo touch /etc/nginx/html/index.html
+
+new_config=\
+"server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+               root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+        server_name _;
+        location / {
+                try_files \$uri \$uri/ =404;
+        }
+        location /redirect_me { 
+            return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+        }
+}
+"
+echo "$new_config" > /etc/nginx/sites-available/default
+sudo service nginx restart
